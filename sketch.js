@@ -11,7 +11,8 @@ var canhao;
 var angulo;
 var bala;
 var matrizbala=[];
-
+var inimigo;
+var matriznavio=[];
 
 
 function preload() {
@@ -55,6 +56,10 @@ function draw() {
  image(torreImagem,torre.position.x, torre.position.y, 160, 310);
  pop();
  canhao.mostrar();
+
+ mostrarnavio();
+ 
+
  for(var i=0;i<matrizbala.length;i++){
    mostrarbala(matrizbala[i],i);
  }
@@ -77,6 +82,26 @@ function mostrarbala(bala,i){
   if(bala){
     bala.mostrar();
   }
+}
+
+function mostrarnavio(){
+  if(matriznavio.length>0){
+    if(matriznavio[matriznavio.length-1]===undefined||matriznavio[matriznavio.length-1].corpo.position.x<width-300){
+        var posicoes=[-40,-60,-70,-20];
+        var posicao=random(posicoes);
+         var inimigo = new Inimigo(width, height-60, 170, 170, posicao);
+          matriznavio.push(inimigo); 
+    }
+    for(var i=0; i<matriznavio.length; i++){ 
+      if(matriznavio[i]){
+        Matter.Body.setVelocity(matriznavio[i].corpo, {x:-0.9, y:0});
+
+      matriznavio[i].mostrar();
+      }
+    }
+  }else{
+    var inimigo = new Inimigo(width, height-60, 170, 170, -80);
+    matriznavio.push(inimigo);  }
 }
 
 
