@@ -7,7 +7,13 @@ class Inimigo {
         this.imagem = loadImage("./assets/boat.png");
         World.add(world, this.corpo);
     }
-
+        remover(index){
+            setTimeout(()=>{
+                Matter.World.remove(world,matriznavio[index].corpo);
+                 delete matriznavio[index] 
+            },2000)
+             
+        }
     mostrar(){
         var pos = this.corpo.position;
         var angle = this.corpo.angle;

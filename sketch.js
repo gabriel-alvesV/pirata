@@ -62,6 +62,8 @@ function draw() {
 
  for(var i=0;i<matrizbala.length;i++){
    mostrarbala(matrizbala[i],i);
+   colisao(i);
+  
  }
   
    
@@ -81,7 +83,11 @@ function keyPressed(){
 function mostrarbala(bala,i){
   if(bala){
     bala.mostrar();
+  if(bala.corpo.position.x>=width||bala.corpo.position.y>=height-50){
+    bala.remover(i);
   }
+  }
+   
 }
 
 function mostrarnavio(){
@@ -103,6 +109,22 @@ function mostrarnavio(){
     var inimigo = new Inimigo(width, height-60, 170, 170, -80);
     matriznavio.push(inimigo);  }
 }
+      function colisao(index){
+        for(var i=0; i<matriznavio.length;i++){
+             if(matrizbala[index]!==undefined&&matriznavio[i]!==undefined){
+               var colidiu=Matter.SAT.collides(
+                 matrizbala[index].corpo,matriznavio[i].corpo
+               )
+              if(colidiu.collided){
+                matriznavio[i].remover(i);
+                Matter.World.remove(world,matrizbala[index].corpo);
+                delete matrizbala[index] 
+              }
+             }
+        }
+
+        
+      }
 
 
 //Revisão de Matrizes
