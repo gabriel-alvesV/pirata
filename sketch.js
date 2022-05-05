@@ -13,11 +13,32 @@ var bala;
 var matrizbala=[];
 var inimigo;
 var matriznavio=[];
+var matrizAnimacao=[];
+var inimigoDados, inimigoSpritesheet;
+var matrizAfundando=[];
+var afundandoDados;
+var afundandoSprite;
+var matrizAfundandob=[];
+var afundandobDados;
+var afundandobSprite;
+
 
 
 function preload() {
   fundo = loadImage("./assets/background.gif");
   torreImagem = loadImage("./assets/tower.png");
+  inimigoDados = loadJSON("./assets/boat/boat.json");
+  inimigoSpritesheet = loadImage("./assets/boat/boat.png");
+  afundandoDados=loadJSON("./assets/boat/brokenBoat.json");
+  afundandoSprite=loadImage("./assets/boat/brokenBoat.png");
+  afundandobDados=loadJSON("./assets/waterSplash/waterSplash.json");
+  afundandobSprite=loadImage("./assets/waterSplash/waterSplash.png");
+
+
+
+
+
+
 }
 
 function setup() {
@@ -39,8 +60,27 @@ function setup() {
  angulo=20;
  canhao=new Canhaopdf(180,110,130,100,angulo);
 
- 
- 
+ var inimigoFrames = inimigoDados.frames;
+
+ for(var i = 0; i < inimigoFrames.length; i++){
+   var pos = inimigoFrames[i].position;
+   var img = inimigoSpritesheet.get(pos.x, pos.y, pos.w, pos.h);
+   matrizAnimacao.push(img);
+ }
+ var afundandoFrames = afundandoDados.frames;
+
+ for(var i = 0; i < afundandoFrames.length; i++){
+   var pos = afundandoFrames[i].position;
+   var img = afundandoSprite.get(pos.x, pos.y, pos.w, pos.h);
+   matrizAfundando.push(img);
+ }
+ var afundandobFrames = afundandobDados.frames;
+
+ for(var i = 0; i < afundandobFrames.length; i++){
+   var pos = afundandobFrames[i].position;
+   var img = afundandobSprite.get(pos.x, pos.y, pos.w, pos.h);
+   matrizAfundandob.push(img);
+ }
 }
 
 function draw() {
@@ -83,6 +123,7 @@ function keyPressed(){
 function mostrarbala(bala,i){
   if(bala){
     bala.mostrar();
+    bala.animar();
   if(bala.corpo.position.x>=width||bala.corpo.position.y>=height-50){
     bala.remover(i);
   }
@@ -95,7 +136,7 @@ function mostrarnavio(){
     if(matriznavio[matriznavio.length-1]===undefined||matriznavio[matriznavio.length-1].corpo.position.x<width-300){
         var posicoes=[-40,-60,-70,-20];
         var posicao=random(posicoes);
-         var inimigo = new Inimigo(width, height-60, 170, 170, posicao);
+         var inimigo = new Inimigo(width, height-60, 170, 170, posicao, matrizAnimacao);
           matriznavio.push(inimigo); 
     }
     for(var i=0; i<matriznavio.length; i++){ 
@@ -103,10 +144,11 @@ function mostrarnavio(){
         Matter.Body.setVelocity(matriznavio[i].corpo, {x:-0.9, y:0});
 
       matriznavio[i].mostrar();
+      matriznavio[i].animar();
       }
     }
   }else{
-    var inimigo = new Inimigo(width, height-60, 170, 170, -80);
+    var inimigo = new Inimigo(width, height-60, 170, 170, -80, matrizAnimacao);
     matriznavio.push(inimigo);  }
 }
       function colisao(index){
