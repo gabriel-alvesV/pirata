@@ -21,8 +21,13 @@ var afundandoSprite;
 var matrizAfundandob=[];
 var afundandobDados;
 var afundandobSprite;
-
-
+var terminou = false;
+var mscFundo;
+var mscAtirar;
+var mscGameOver;
+var mscAgua;
+var pirataRindo=false;
+var placar=0;
 
 function preload() {
   fundo = loadImage("./assets/background.gif");
@@ -34,11 +39,10 @@ function preload() {
   afundandobDados=loadJSON("./assets/waterSplash/waterSplash.json");
   afundandobSprite=loadImage("./assets/waterSplash/waterSplash.png");
 
-
-
-
-
-
+mscFundo=loadSound('./assets/background_music.mp3');
+mscAtirar=loadSound('./assets/cannon_explosion.mp3');
+mscGameOver=loadSound('./assets/pirate_laugh.mp3');
+mscAgua=loadSound('./assets/cannon_water.mp3');
 }
 
 function setup() {
@@ -84,8 +88,17 @@ function setup() {
 }
 
 function draw() {
-  background(189);
+  background(189);  
   image(fundo, 0, 0, 1200, 600);
+ fill('black');
+ textSize(40);
+ text(placar,1100,50);
+
+
+  if(!mscFundo.isPlaying()){
+    mscFundo.play();
+    mscFundo.setVolume(0.1);
+    }
 
   Engine.update(engine);
  
@@ -109,6 +122,8 @@ function draw() {
    
 }function keyReleased(){
   if(keyCode===DOWN_ARROW){
+    mscAtirar.play();
+    mscAtirar.setVolume(0.1);
     matrizbala[matrizbala.length-1].atirar();
   }
 }
@@ -126,6 +141,12 @@ function mostrarbala(bala,i){
     bala.animar();
   if(bala.corpo.position.x>=width||bala.corpo.position.y>=height-50){
     bala.remover(i);
+if(bala.balaAfundando===true){
+  mscAgua.playMode('untilDone');
+  mscAgua.play();
+  mscAgua.setVolume(0.1);
+}
+
   }
   }
    
@@ -145,6 +166,19 @@ function mostrarnavio(){
 
       matriznavio[i].mostrar();
       matriznavio[i].animar();
+
+      var colidiu = Matter.SAT.collides(
+        torre, matriznavio[i].corpo
+      );
+      if(colidiu.collided && !matriznavio[i].afundou){
+        if(!pirataRindo&&!mscGameOver.isPlaying()){
+          mscGameOver.play();
+          mscGameOver.setVolume(0.3);
+          pirataRindo=true;
+        }
+        terminou = true;
+        gameOver();
+      }
       }
     }
   }else{
@@ -158,6 +192,9 @@ function mostrarnavio(){
                  matrizbala[index].corpo,matriznavio[i].corpo
                )
               if(colidiu.collided){
+                placar+=50;
+
+
                 matriznavio[i].remover(i);
                 Matter.World.remove(world,matrizbala[index].corpo);
                 delete matrizbala[index] 
@@ -167,6 +204,22 @@ function mostrarnavio(){
 
         
       }
+
+  function gameOver(){
+      swal({
+        title: "Game Over",
+        text: "Até a próxima!",
+        imageUrl: "https://raw.githubusercontent.com/whitehatjr/PiratesInvasion/main/assets/boat.png",
+        imageSize: "150x150",
+        confirmButtonText: "Clique para jogar"
+      },
+      function(isConfirm){
+        if(isConfirm){
+          location.reload();
+        }
+      }
+      );
+    }
 
 
 //Revisão de Matrizes
